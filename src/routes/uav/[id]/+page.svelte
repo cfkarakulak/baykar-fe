@@ -14,7 +14,7 @@
 
 	onMount(() => loadThing());
 
-	let title = '';
+	let name = '';
 
 	async function loadThing() {
 		const res = await fetch('http://localhost:8000/api/v1/uavs/1/', {
@@ -27,7 +27,7 @@
 
 		let data = await res.json();
 
-		title = data.title;
+		name = data.name;
 	}
 
 	async function updateUAV() {
@@ -38,7 +38,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				title: title
+				name: name
 			})
 		});
 
@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-	<title>Update the UAV</title>
+	<name>Update the UAV</name>
 </svelte:head>
 
 <div class="card-display max-w-xs mx-auto">
@@ -56,7 +56,7 @@
 		<h1 class="h3 mb-3 fw-normal text-center">Update the UAV</h1>
 
 		<Card padded>
-			<Textfield variant="outlined" bind:value={title} label="Edit Title" />
+			<Textfield variant="outlined" bind:value={name} label="Edit name" />
 			<Button class="mt-4" on:click={updateUAV}>Update</Button>
 		</Card>
 	</div>

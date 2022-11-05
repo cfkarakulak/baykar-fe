@@ -10,8 +10,7 @@
 		goto('/login');
 	}
 
-	let title = '';
-	let content = '';
+	let name = '';
 
 	async function createUav() {
 		const res = await fetch('http://localhost:8000/api/v1/uavs/', {
@@ -35,7 +34,7 @@
 		<h1 class="h3 mb-3 fw-normal text-center">Add a new UAV</h1>
 
 		<Card padded>
-			<Textfield variant="outlined" value="" label="Title" />
+			<Textfield variant="outlined" value="" label="Name" />
 			<Textfield class="mt-4" textarea input$maxlength={2500} value="" label="Content" />
 			<Button class="mt-4" on:click={createUav}>Create</Button>
 		</Card>

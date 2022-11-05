@@ -8,7 +8,7 @@
 	export let loaded = false;
 
 	async function deleteUav(id: number) {
-		const res = await fetch(`http://localhost:8000/uavs/${id}`, {
+		const res = await fetch(`http://localhost:8000/api/v1/uavs/${id}`, {
 			method: 'DELETE',
 			headers: {
 				Authorization: `Bearer ${$token}`
@@ -25,7 +25,7 @@
 	<Head>
 		<Row>
 			<Cell numeric>ID</Cell>
-			<Cell>Title</Cell>
+			<Cell>Name</Cell>
 			<Cell>Category</Cell>
 			<Cell>Company</Cell>
 			<Cell>Brand</Cell>
@@ -36,7 +36,7 @@
 		{#each items as item (item.id)}
 			<Row>
 				<Cell numeric>{item.id}</Cell>
-				<Cell>{item.title}</Cell>
+				<Cell>{item.name}</Cell>
 				<Cell>{item.category.name}</Cell>
 				<Cell>{item.company.name}</Cell>
 				<Cell>{item.brand.name}</Cell>

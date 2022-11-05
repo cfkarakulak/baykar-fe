@@ -58,5 +58,7 @@
 		</div>
 	</div>
 
-	<Table {items} {loaded} />
+	<div class="w-3/4 mx-auto">
+		<Table {items} {loaded} />
+	</div>
 {/if}
