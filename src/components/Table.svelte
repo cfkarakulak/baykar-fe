@@ -8,14 +8,12 @@
 	export let loaded = false;
 
 	async function deleteUav(id: number) {
-		const res = await fetch(`http://localhost:8000/api/v1/uavs/${id}`, {
+		const res = await fetch(`http://localhost:8000/api/v1/uavs/${id}/`, {
 			method: 'DELETE',
 			headers: {
 				Authorization: `Bearer ${$token}`
 			}
 		});
-
-		const fromEndpoint = await res.json();
 
 		location.reload();
 	}
@@ -37,9 +35,9 @@
 			<Row>
 				<Cell numeric>{item.id}</Cell>
 				<Cell>{item.name}</Cell>
-				<Cell>{item.category.name}</Cell>
-				<Cell>{item.company.name}</Cell>
-				<Cell>{item.brand.name}</Cell>
+				<Cell>{item.category}</Cell>
+				<Cell>{item.company}</Cell>
+				<Cell>{item.brand}</Cell>
 				<Cell>
 					<a href={`/uav/${item.id}`}>Edit</a>
 					<Button on:click={() => deleteUav(item.id)}>Delete</Button>

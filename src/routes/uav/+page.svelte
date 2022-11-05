@@ -20,9 +20,19 @@
 	let items: Uav[] = [];
 	let loaded = false;
 
-	onMount(() => loadThings());
+	onMount(() => loadData());
 
-	async function loadThings() {
+	function logout() {
+		$token = null;
+
+		if (browser) {
+			window.localStorage.removeItem('token');
+		}
+
+		goto('/login');
+	}
+
+	async function loadData() {
 		loaded = false;
 
 		const res = await fetch('http://localhost:8000/api/v1/uavs/', {
@@ -33,9 +43,13 @@
 			}
 		});
 
-		const fromEndpoint = await res.json();
+		const data = await res.json();
 
-		items = fromEndpoint.results;
+		if (res.status == 401) {
+			logout();
+		}
+
+		items = data.results;
 		loaded = true;
 	}
 </script>
@@ -61,4 +75,8 @@
 	<div class="w-3/4 mx-auto">
 		<Table {items} {loaded} />
 	</div>
+
+	<button on:click={logout} class="table mt-8 w-64 mx-auto text-center mx-auto text-gray-500 mt-4"
+		>Log out
+	</button>
 {/if}
