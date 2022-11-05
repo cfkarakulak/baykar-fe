@@ -1,4 +1,5 @@
 <script lang="ts">
+	import token from '../stores/auth';
 	import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
 	import LinearProgress from '@smui/linear-progress';
 	import Button from '@smui/button';
@@ -8,11 +9,15 @@
 
 	async function deleteUav(id: number) {
 		const res = await fetch(`http://localhost:8000/uavs/${id}`, {
-			method: 'DELETE'
-		}).then((res) => {
-			res.json();
-			location.reload();
+			method: 'DELETE',
+			headers: {
+				Authorization: `Bearer ${$token}`
+			}
 		});
+
+		const fromEndpoint = await res.json();
+
+		location.reload();
 	}
 </script>
 

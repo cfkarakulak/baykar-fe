@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Table from '../../components/Table.svelte';
+	import token from '../../stores/auth';
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
+
+	if (browser && !$token) {
+		goto('/login');
+	}
 
 	type Uav = {
 		createdAt: Date;
@@ -13,31 +20,43 @@
 	let items: Uav[] = [];
 	let loaded = false;
 
-	onMount(() => loadThings(false));
+	onMount(() => loadThings());
 
-	function loadThings(wait: boolean) {
-		if (typeof fetch !== 'undefined') {
-			loaded = false;
+	async function loadThings() {
+		loaded = false;
 
-			fetch('http://localhost:8000/api/v1/uavs/', {
-				headers: {
-					Authorization:
-						'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3NjQyMTQ2LCJpYXQiOjE2Njc2NDE4NDYsImp0aSI6ImYwMmJiNTY3ZTFjODQ1MDQ4MTI2MDA4ODM1YWY1ZWY4IiwidXNlcl9pZCI6Mn0.6eHPg5MObbOSXrDB3zLYCyLVQdFJlnCUXTS0x3a2qq8'
-				}
-			})
-				.then(function (response) {
-					return response.json();
-				})
-				.then(function (json) {
-					items = json.results;
-					loaded = true;
-				});
-		}
+		const res = await fetch('http://localhost:8000/api/v1/uavs/', {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${$token}`,
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const fromEndpoint = await res.json();
+
+		items = fromEndpoint.results;
+		loaded = true;
 	}
 </script>
 
-<div>
-	<a href="/uav/new">Add New</a>
-</div>
+<svelte:head>
+	<title>List of UAVs</title>
+</svelte:head>
 
-<Table {items} {loaded} />
+{#if $token}
+	<div class="mb-8">
+		<div class="w-64 mx-auto">
+			<h1 class="h3 mb-3 fw-normal text-center">
+				You can view, create/update and delete your UAVs
+			</h1>
+			<a
+				href="/uav/new"
+				class="inline-block w-full mx-auto text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+				>Create a new one</a
+			>
+		</div>
+	</div>
+
+	<Table {items} {loaded} />
+{/if}

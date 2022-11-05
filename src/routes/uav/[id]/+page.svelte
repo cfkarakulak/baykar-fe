@@ -1,40 +1,63 @@
-<script>
+<script lang="ts">
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import Button from '@smui/button';
-	/** @type {import('./$types').PageData} */
-	export let data;
 	import Textfield from '@smui/textfield';
 	import Card, { Content } from '@smui/card';
+	import { browser } from '$app/environment';
+	import token from '../../../stores/auth';
 	import { goto } from '$app/navigation';
-	let valueA = data.title;
-	let value = data.content;
 
-	async function editUav() {
-		const res = await fetch(`http://127.0.0.1:8000/api/v1/uavs/${data.id}/`, {
+	if (browser && !$token) {
+		goto('/login');
+	}
+
+	onMount(() => loadThing());
+
+	let title = '';
+
+	async function loadThing() {
+		const res = await fetch('http://localhost:8000/api/v1/uavs/1/', {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${$token}`,
+				'Content-Type': 'application/json'
+			}
+		});
+
+		let data = await res.json();
+
+		title = data.title;
+	}
+
+	async function updateUAV() {
+		const res = await fetch(`http://localhost:8000/api/v1/uavs/${$page.params.id}/`, {
 			method: 'PATCH',
 			headers: {
-				'Content-Type': 'application/json',
-				Authorization:
-					'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3NjQyMTQ2LCJpYXQiOjE2Njc2NDE4NDYsImp0aSI6ImYwMmJiNTY3ZTFjODQ1MDQ4MTI2MDA4ODM1YWY1ZWY4IiwidXNlcl9pZCI6Mn0.6eHPg5MObbOSXrDB3zLYCyLVQdFJlnCUXTS0x3a2qq8'
+				Authorization: `Bearer ${$token}`,
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				title: valueA,
-				content: value
+				title: title
 			})
-		}).then((res) => {
-			res.json();
-			goto('/');
 		});
+
+		const fromEndpoint = await res.json();
+		goto('/uav');
 	}
 </script>
 
-<div class="card-display">
+<svelte:head>
+	<title>Update the UAV</title>
+</svelte:head>
+
+<div class="card-display max-w-xs mx-auto">
 	<div class="card-container">
+		<h1 class="h3 mb-3 fw-normal text-center">Update the UAV</h1>
+
 		<Card padded>
-			<Textfield variant="outlined" bind:value={valueA} label="Edit Title" />
-			<br />
-			<Textfield textarea input$maxlength={2500} bind:value label="Edit Content" />
-			<br />
-			<Button on:click={editUav}>Edit</Button>
+			<Textfield variant="outlined" bind:value={title} label="Edit Title" />
+			<Button class="mt-4" on:click={updateUAV}>Update</Button>
 		</Card>
 	</div>
 </div>
